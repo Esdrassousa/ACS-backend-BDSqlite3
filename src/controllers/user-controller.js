@@ -27,17 +27,24 @@ exports.get = async (req, res) => {
     res.status(201).send(users)
 }
 
-exports.create = async (request, response ,next) => {
+exports.getById = async (req, res) => {
+
+    const users = await connection('ACS').where().select('*')
+    res.status(201).send(users)
+}
+
+exports.authentication = async (request, response ,next) => {
 
     try {
 
         const email = request.body.email
         const senha = md5(request.body.senha + global.SALT_KEY)
 
+
         const user = await connection('ACS').where({
             email: email, 
             senha: senha,
-        }).first()//.select('nome')
+        }).first()//.select('id')
 
         if (!user) {
             response.status(400).send({ message: 'usuario nao encontrado' })}
