@@ -1,7 +1,7 @@
 const md5 = require('md5')
 const connection = require('../database/connection')
 const crypto = require('crypto')
-const knex = require('knex')
+
 
 exports.post = async (req, res) => {
 
@@ -55,3 +55,26 @@ exports.authentication = async (request, response ,next) => {
         response.send(e);
     }
 }
+
+exports.delete = async(req, res) =>{
+
+    const{id} = req.params;
+    //const family_id = req.headers.authorization
+
+    try{
+
+    const user = await connection('ACS').where('id' , id).delete();
+
+    if (!user){
+        res.status(401).send({message:'nao foi possivel deletar'})
+    }
+
+    
+
+    res.status(200).send({message:'deletado'})
+
+}catch(e){
+    res.status(401).send({message:'nao foi possivel deletar'})
+}
+}
+
