@@ -1,6 +1,7 @@
 const md5 = require('md5')
 const connection = require('../database/connection')
 const crypto = require('crypto')
+const authorization = require('../services/auth-service')
 
 
 exports.post = async (req, res) => {
@@ -48,8 +49,20 @@ exports.authentication = async (request, response ,next) => {
 
         if (!user) {
             response.status(400).send({ message: 'usuario nao encontrado' })}
+
+            const token = await authorization.generateToken({
+                email:request.body.email,
+                senha:request.body.senha
+            });
+    
+            response.send({
+                token: token,
+                data:{
+                    user
+                }
+            })
   
-            response.status(200).send(user)
+            //response.status(200).send(user)
     }
     catch (e) {
         response.send(e);
@@ -68,8 +81,6 @@ exports.delete = async(req, res) =>{
     if (!user){
         res.status(401).send({message:'nao foi possivel deletar'})
     }
-
-    
 
     res.status(200).send({message:'deletado'})
 

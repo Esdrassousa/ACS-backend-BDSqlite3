@@ -15,23 +15,6 @@ exports.getByCpf = async (req, res) => {
 
 exports.post = async (req, res, next) => {
 
-
-    try {
-
-        //valida cpf
-        //var a = await valida.TestaCPF(req.body.cpf)
-
-        //if(a == false){
-
-        //}
-
-
-
-    } catch (err) {
-        res.send({ message: 'erro' })
-    }
-
-    //if (a == true ) {
     try {
 
         const familia_id = req.headers.authorization;
