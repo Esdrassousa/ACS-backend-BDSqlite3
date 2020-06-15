@@ -1,10 +1,11 @@
 const mysql = require('mysql')
 
 var pool =  mysql.createPool({
-    "Hostname" : process.env.MYSQL_USER,
-    "Port" : process.env.MYSQL_PORT,
-    "Username" : process.env.MYSQL_USERNAME,
-    "Password" : process.env.MYSQL_PASSWORD,
+    "user" : process.env.MYSQL_USER,
+    "password" : process.env.MYSQL_PASSWORD,
+    "database" : process.env.MYSQL_DATABASE,
+    "host" : process.env.MYSQL_HOST,
+    "port" : process.env.MYSQL_PORT,
 
 
 })
