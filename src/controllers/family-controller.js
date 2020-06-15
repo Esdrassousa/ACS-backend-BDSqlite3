@@ -1,5 +1,6 @@
 
-const connection = require('../database/connection')
+//const connection = require('../database/connection')
+const connection = require('../../mysql').pool
 
 exports.post = async(req, res)=>{
 

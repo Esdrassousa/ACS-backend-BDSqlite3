@@ -1,5 +1,6 @@
 const md5 = require('md5')
-const connection = require('../database/connection')
+//const connection = require('../database/connection')
+const connection = require('../../mysql').pool
 const crypto = require('crypto')
 const authorization = require('../services/auth-service')
 

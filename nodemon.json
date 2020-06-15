@@ -1,0 +1,8 @@
+{
+    "env":{
+    "MYSQL_USER" : "us-cdbr-east-05.cleardb.net",
+    "MYSQL_PORT" : "3306",
+    "MYSQL_USERNAME" : "b9d29dbf4876c1",
+    "MYSQL_PASSWORD" : "c127899f"
+    }
+}

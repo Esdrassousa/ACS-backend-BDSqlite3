@@ -1,5 +1,5 @@
 const valida = require('../validaCPF')
-const connection = require('../database/connection')
+const connection = require('../../mysql').pool
 const crypto = require('crypto')
 
 exports.getByCpf = async (req, res) => {
