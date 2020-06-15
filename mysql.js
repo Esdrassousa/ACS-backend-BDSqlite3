@@ -1,16 +1,16 @@
 const mysql = require('mysql2')
 
- const connection =  mysql.createConnection({
+ const pool =  mysql.createPool({
     "user" : process.env.MYSQL_USER,
     "password" : process.env.MYSQL_PASSWORD,
     "database" : process.env.MYSQL_DATABASE,
     "host" : process.env.MYSQL_HOST,
-    //"port" : process.env.MYSQL_PORT,
+    "port" : process.env.MYSQL_PORT,
 
 
 })
 
-//exports.pool = pool; */
+exports.pool = pool; 
 
 /* 
 pool.connect(function(err){
@@ -28,11 +28,11 @@ pool.connect(function(err){
 })
 console.log(CLEARDB_DATABASE_URL)
 const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL) */
-
+/* 
 connection.connect(function(err){
     if(err) return console.log(err);
     console.log('conectou!');
-  })
+  }) */
 
 
     
