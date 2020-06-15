@@ -17,20 +17,24 @@ exports.post = async (req, res) => {
 
         }) */
 
-        await connection.getConnection((error , conn)=>{
+        await connection.getConnection((error, conn) => {
+            if (error)
+                return res.send(400);
             conn.query(
                 'INSERT INTO acs (id, nome, email, senha) VALUES (?,?,?,?)',
                 [//crypto.randomBytes(4).toString('HEX'),
-                req.body.id,
-                req.body.nome,
-                req.body.email,
-                md5(req.body.senha + global.SALT_KEY)],
-                (error , resultado , field)=>{
+                    req.body.id,
+                    req.body.nome,
+                    req.body.email,
+                    md5(req.body.senha + global.SALT_KEY)],
+                (error, resultado, field) => {
                     conn.release();
 
-                    if(error ){
-                       return res.status(201).send({error :error , 
-                        response:null})
+                    if (error) {
+                        return res.status(201).send({
+                            error: error,
+                            response: null
+                        })
                     }
                     res.status(201).send({ message: 'cadastrado com sucesso' })
                 }
@@ -56,7 +60,7 @@ exports.getById = async (req, res) => {
     res.status(201).send(users)
 }
 
-exports.authentication = async (request, response ,next) => {
+exports.authentication = async (request, response, next) => {
 
     try {
 
@@ -65,49 +69,50 @@ exports.authentication = async (request, response ,next) => {
 
 
         const user = await connection('acs').where({
-            email: email, 
+            email: email,
             senha: senha,
         }).first()//.select('id')
 
         if (!user) {
-            response.status(400).send({ message: 'usuario nao encontrado' })}
+            response.status(400).send({ message: 'usuario nao encontrado' })
+        }
 
-            const token = await authorization.generateToken({
-                email:request.body.email,
-                senha:request.body.senha
-            });
-    
-            response.send({
-                token: token,
-                data:{
-                    user
-                }
-            })
-  
-            //response.status(200).send(user)
+        const token = await authorization.generateToken({
+            email: request.body.email,
+            senha: request.body.senha
+        });
+
+        response.send({
+            token: token,
+            data: {
+                user
+            }
+        })
+
+        //response.status(200).send(user)
     }
     catch (e) {
         response.send(e);
     }
 }
 
-exports.delete = async(req, res) =>{
+exports.delete = async (req, res) => {
 
-    const{id} = req.params;
+    const { id } = req.params;
     //const family_id = req.headers.authorization
 
-    try{
+    try {
 
-    const user = await connection('acs').where('id' , id).delete();
+        const user = await connection('acs').where('id', id).delete();
 
-    if (!user){
-        res.status(401).send({message:'nao foi possivel deletar'})
+        if (!user) {
+            res.status(401).send({ message: 'nao foi possivel deletar' })
+        }
+
+        res.status(200).send({ message: 'deletado' })
+
+    } catch (e) {
+        res.status(401).send({ message: 'nao foi possivel deletar' })
     }
-
-    res.status(200).send({message:'deletado'})
-
-}catch(e){
-    res.status(401).send({message:'nao foi possivel deletar'})
-}
 }
 
