@@ -1,6 +1,7 @@
 const app = require('../src/app')
 const http = require('http');
 const debug = require('debug');
+const mysql = require('mysql2')
 
 const port = normalizePort(process.env.PORT || '3333');
 app.set('port', port);
@@ -29,6 +30,13 @@ function normalizePort(val) {
     return false;
 }
 
+console.log(CLEARDB_DATABASE_URL)
+const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL)
+
+connection.connect(function(err){
+    if(err) return console.log(err);
+    console.log('conectou!');
+  })
 //possibles erros in port
 
 function onError(error) {
