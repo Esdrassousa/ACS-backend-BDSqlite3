@@ -19,17 +19,21 @@ pool.connect(function(err){
 }) */
 
 
-var connection =  mysql.createConnection({
+/* var connection =  mysql.createConnection({
     "host" : 'us-cdbr-iron-east-05.cleardb.net',
     "user" : 'b9d29dbf4876c1',
     "database" : 'heroku_6ac9ab071661142',
     "password" : 'c127899f',
     
-})
+}) */
+console.log(CLEARDB_DATABASE_URL)
+const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL)
 
 connection.connect(function(err){
     if(err) return console.log(err);
     console.log('conectou!');
   })
+
+
     
     //"port" : process.env.MYSQL_PORT
