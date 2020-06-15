@@ -50,8 +50,30 @@ exports.post = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-    const users = await connection('acs').select('*')
-    res.status(201).send(users)
+    /* const users = await connection('acs').select('*')
+    res.status(201).send(users) */
+
+
+    await connection.getConnection((error, conn) => {
+        if (error)
+            return res.send(400);
+        conn.query(
+            'SELECT * FROM acs',
+
+            (error, resultado, field) => {
+                conn.release();
+
+                if (error) {
+                    return res.status(201).send({
+                        error: error,
+                        response: null
+                    })
+                }
+                res.status(201).send(resultado)
+            }
+        )
+    })
+
 }
 
 exports.getById = async (req, res) => {
