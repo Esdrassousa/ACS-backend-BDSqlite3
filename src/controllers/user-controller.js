@@ -20,8 +20,8 @@ exports.post = async (req, res) => {
         await connection.getConnection((error , conn)=>{
             conn.query(
                 'INSERT INTO acs (id, nome, email, senha) VALUES (?,?,?,?)',
-                [crypto.randomBytes(4).toString('HEX'),
-                //req.body.id,
+                [//crypto.randomBytes(4).toString('HEX'),
+                req.body.id,
                 req.body.nome,
                 req.body.email,
                 md5(req.body.senha + global.SALT_KEY)],
