@@ -1,10 +1,10 @@
 {
     "env":{
-    "MYSQL_USER" : "b9d29dbf4876c1",
-    "MYSQL_PASSWORD" : "c127899f",
-    "MYSQL_DATABASE" : "heroku_6ac9ab071661142",
-    "MYSQL_USERNAME" : "us-cdbr-east-05.cleardb.net",
-    "MYSQL_PORT" : 3306
+    "MYSQL_USER" : "root",
+    
+    "MYSQL_DATABASE" : "test",
+    "MYSQL_USERNAME" : "localhost",
+    "MYSQL_PORT" : 3307
     
     
     }

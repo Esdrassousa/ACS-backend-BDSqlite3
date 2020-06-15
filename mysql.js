@@ -1,4 +1,4 @@
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 var pool =  mysql.createPool({
     "user" : process.env.MYSQL_USER,
@@ -11,3 +11,9 @@ var pool =  mysql.createPool({
 })
 
 exports.pool = pool;
+
+/* 
+pool.connect(function(err){
+  if(err) return console.log(err);
+  console.log('conectou!');
+}) */

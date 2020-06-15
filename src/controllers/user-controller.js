@@ -1,4 +1,5 @@
 const md5 = require('md5')
+const mysql = require('mysql')
 //const connection = require('../database/connection')
 const connection = require('../../mysql').pool
 const crypto = require('crypto')
@@ -19,7 +20,8 @@ exports.post = async (req, res) => {
         await connection.getConnection((error , conn)=>{
             conn.query(
                 'INSERT INTO acs (id, nome, email, senha) VALUES (?,?,?,?)',
-                [ crypto.randomBytes(4).toString('HEX'),
+                [crypto.randomBytes(4).toString('HEX'),
+                //req.body.id,
                 req.body.nome,
                 req.body.email,
                 md5(req.body.senha + global.SALT_KEY)],
@@ -27,7 +29,8 @@ exports.post = async (req, res) => {
                     conn.release();
 
                     if(error ){
-                       return res.status(201).send({error :error , response:null})
+                       return res.status(201).send({error :error , 
+                        response:null})
                     }
                     res.status(201).send({ message: 'cadastrado com sucesso' })
                 }
