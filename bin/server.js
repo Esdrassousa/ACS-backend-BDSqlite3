@@ -30,13 +30,7 @@ function normalizePort(val) {
     return false;
 }
 
-console.log(CLEARDB_DATABASE_URL)
-const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL)
 
-connection.connect(function(err){
-    if(err) return console.log(err);
-    console.log('conectou!');
-  })
 //possibles erros in port
 
 function onError(error) {

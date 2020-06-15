@@ -1,6 +1,6 @@
 const mysql = require('mysql2')
 
-/* var pool =  mysql.createPool({
+ const connection =  mysql.createConnection({
     "user" : process.env.MYSQL_USER,
     "password" : process.env.MYSQL_PASSWORD,
     "database" : process.env.MYSQL_DATABASE,
@@ -10,7 +10,7 @@ const mysql = require('mysql2')
 
 })
 
-exports.pool = pool; */
+//exports.pool = pool; */
 
 /* 
 pool.connect(function(err){
@@ -19,15 +19,15 @@ pool.connect(function(err){
 }) */
 
 
-/* var connection =  mysql.createConnection({
+/*  var connection =  mysql.createConnection({
     "host" : 'us-cdbr-iron-east-05.cleardb.net',
     "user" : 'b9d29dbf4876c1',
     "database" : 'heroku_6ac9ab071661142',
     "password" : 'c127899f',
     
-}) */
+})
 console.log(CLEARDB_DATABASE_URL)
-const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL)
+const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL) */
 
 connection.connect(function(err){
     if(err) return console.log(err);
