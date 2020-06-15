@@ -20,7 +20,7 @@ pool.connect(function(err){
 
 
 var connection =  mysql.createConnection({
-    "host" : 'us-cdbr-east-05.cleardb.net',
+    "host" : 'us-cdbr-iron-east-05.cleardb.net',
     "user" : 'b9d29dbf4876c1',
     "database" : 'heroku_6ac9ab071661142',
     "password" : 'c127899f',
