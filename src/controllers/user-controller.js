@@ -9,24 +9,17 @@ const authorization = require('../services/auth-service')
 exports.post = async (req, res) => {
 
     try {
-        /* await connection('acs').insert({
-            id: crypto.randomBytes(4).toString('HEX'),
-            nome: req.body.nome,
-            email: req.body.email,
-            senha: md5(req.body.senha + global.SALT_KEY)
-
-        }) */
 
         await connection.getConnection((error, conn) => {
             if (error)
                 return res.send(400);
             conn.query(
                 'INSERT INTO acs (id, nome, email, senha) VALUES (?,?,?,?)',
-                [//crypto.randomBytes(4).toString('HEX'),
-                    req.body.id,
-                    req.body.nome,
-                    req.body.email,
-                    md5(req.body.senha + global.SALT_KEY)],
+                [crypto.randomBytes(4).toString('HEX'),
+                //req.body.id,
+                req.body.nome,
+                req.body.email,
+                md5(req.body.senha + global.SALT_KEY)],
                 (error, resultado, field) => {
                     conn.release();
 
@@ -50,8 +43,7 @@ exports.post = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-    /* const users = await connection('acs').select('*')
-    res.status(201).send(users) */
+
 
 
     await connection.getConnection((error, conn) => {
@@ -78,13 +70,34 @@ exports.get = async (req, res) => {
 
 exports.getById = async (req, res) => {
 
-    const users = await connection('acs').where().select('*')
-    res.status(201).send(users)
+    /* const users = await connection('acs').where().select('*')
+    res.status(201).send(users) */
+
+    await connection.getConnection((error, conn) => {
+        if (error)
+            return res.send(400);
+        conn.query(
+            'SELECT id , nome FROM acs WHERE id =?',
+            [req.params.id],
+
+            (error, resultado, field) => {
+                conn.release();
+
+                if (error) {
+                    return res.status(201).send({
+                        error: error,
+                        response: null
+                    })
+                }
+                res.status(201).send(resultado)
+            }
+        )
+    })
 }
 
-exports.authentication = async (request, response, next) => {
+exports.authentication = async (req, res, next) => {
 
-    try {
+    /* try {
 
         const email = request.body.email
         const senha = md5(request.body.senha + global.SALT_KEY)
@@ -115,26 +128,70 @@ exports.authentication = async (request, response, next) => {
     }
     catch (e) {
         response.send(e);
-    }
+    } */
+
+    //const { id } = req.params;
+    const email = req.body.email
+    const senha = md5(req.body.senha + global.SALT_KEY)
+
+    await connection.getConnection((error, conn) => {
+        if (error)
+            return res.send(400);
+        const a = conn.query(
+            'SELECT * FROM acs WHERE (email, senha) = (? ,?)',
+            [email, senha],
+
+            async (error, resultado, field) => {
+                //conn.release();
+
+                
+                if (error) {
+                    return res.status(201).send({ message: 'usuario nao encontrado' })
+                }
+
+                if(resultado.length == 0){
+                    return res.status(201).send({ message: 'usuario nao encontrado' })
+                }
+                if (resultado) {
+
+                    const token = await authorization.generateToken({
+                        email: req.body.email,
+                        senha: req.body.senha
+                    })
+
+                    res.send({ token: token })
+                }
+
+
+                //res.status(201).send(resultado)
+            }
+        )
+    })
+
 }
 
 exports.delete = async (req, res) => {
 
     const { id } = req.params;
-    //const family_id = req.headers.authorization
+    await connection.getConnection((error, conn) => {
+        if (error)
+            return res.send(400);
+        conn.query(
+            'DELETE FROM acs WHERE id =?',
+            [id],
 
-    try {
+            (error, resultado, field) => {
+                conn.release();
 
-        const user = await connection('acs').where('id', id).delete();
+                if (error) {
+                    return res.status(202).send({
+                        error: error,
 
-        if (!user) {
-            res.status(401).send({ message: 'nao foi possivel deletar' })
-        }
-
-        res.status(200).send({ message: 'deletado' })
-
-    } catch (e) {
-        res.status(401).send({ message: 'nao foi possivel deletar' })
-    }
+                    })
+                }
+                res.status(201).send({ message: 'deletado com sucesso' })
+            }
+        )
+    })
 }
 
