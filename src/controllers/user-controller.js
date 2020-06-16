@@ -131,42 +131,51 @@ exports.authentication = async (req, res, next) => {
     } */
 
     //const { id } = req.params;
-    const email = req.body.email
-    const senha = md5(req.body.senha + global.SALT_KEY)
+    try {
+        const email = req.body.email
+        const senha = md5(req.body.senha + global.SALT_KEY)
 
-    await connection.getConnection((error, conn) => {
-        if (error)
-            return res.send(400);
-        const a = conn.query(
-            'SELECT * FROM acs WHERE (email, senha) = (? ,?)',
-            [email, senha],
+        await connection.getConnection((error, conn) => {
+            if (error)
+                return res.send(400);
+            conn.query(
+                'SELECT * FROM acs WHERE (email, senha) = (? ,?)',
+                [email, senha],
 
-            async (error, resultado, field) => {
-                //conn.release();
+                async (error, resultado, field) => {
+                    //conn.release();
+                    if (resultado.length == 0) {
+                        return res.status(400).send({ message: 'usuario nao encontrado' })
+                    }
 
-                
-                if (error) {
-                    return res.status(201).send({ message: 'usuario nao encontrado' })
+                    if (error) {
+                        return res.status(400).send({ message: 'usuario nao encontrado' })
+                    }
+
+
+                    if (resultado) {
+
+                        const token = await authorization.generateToken({
+                            email: req.body.email,
+                            senha: req.body.senha
+                        })
+
+                        res.status(200).send({
+                            token: token,
+                            resultado
+
+
+                        })
+                    }
+
+
+                    //res.status(201).send(resultado)
                 }
-
-                if(resultado.length == 0){
-                    return res.status(201).send({ message: 'usuario nao encontrado' })
-                }
-                if (resultado) {
-
-                    const token = await authorization.generateToken({
-                        email: req.body.email,
-                        senha: req.body.senha
-                    })
-
-                    res.send({ token: token })
-                }
-
-
-                //res.status(201).send(resultado)
-            }
-        )
-    })
+            )
+        })
+    } catch (e) {
+        res.send(e)
+    }
 
 }
 
