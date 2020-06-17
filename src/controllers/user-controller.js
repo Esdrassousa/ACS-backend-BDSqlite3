@@ -43,9 +43,6 @@ exports.post = async (req, res) => {
 
 exports.get = async (req, res) => {
 
-
-
-
     await connection.getConnection((error, conn) => {
         if (error)
             return res.send(400);
@@ -56,7 +53,7 @@ exports.get = async (req, res) => {
                 conn.release();
 
                 if (error) {
-                    return res.status(201).send({
+                    return res.status(400).send({
                         error: error,
                         response: null
                     })
@@ -69,9 +66,6 @@ exports.get = async (req, res) => {
 }
 
 exports.getById = async (req, res) => {
-
-    /* const users = await connection('acs').where().select('*')
-    res.status(201).send(users) */
 
     await connection.getConnection((error, conn) => {
         if (error)
@@ -97,40 +91,7 @@ exports.getById = async (req, res) => {
 
 exports.authentication = async (req, res, next) => {
 
-    /* try {
-
-        const email = request.body.email
-        const senha = md5(request.body.senha + global.SALT_KEY)
-
-
-        const user = await connection('acs').where({
-            email: email,
-            senha: senha,
-        }).first()//.select('id')
-
-        if (!user) {
-            response.status(400).send({ message: 'usuario nao encontrado' })
-        }
-
-        const token = await authorization.generateToken({
-            email: request.body.email,
-            senha: request.body.senha
-        });
-
-        response.send({
-            token: token,
-            data: {
-                user
-            }
-        })
-
-        //response.status(200).send(user)
-    }
-    catch (e) {
-        response.send(e);
-    } */
-
-    //const { id } = req.params;
+    
     try {
         const email = req.body.email
         const senha = md5(req.body.senha + global.SALT_KEY)
@@ -143,7 +104,8 @@ exports.authentication = async (req, res, next) => {
                 [email, senha],
 
                 async (error, resultado, field) => {
-                    //conn.release();
+                   
+                    conn.release();
                     if (resultado.length == 0) {
                         return res.status(400).send({ message: 'usuario nao encontrado' })
                     }
@@ -159,12 +121,12 @@ exports.authentication = async (req, res, next) => {
                             email: req.body.email,
                             senha: req.body.senha
                         })
+                        
+                        const {id}  = await resultado[0]
 
                         res.status(200).send({
                             token: token,
-                            resultado
-
-
+                            id
                         })
                     }
 

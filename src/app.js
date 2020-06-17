@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyparser =  require('body-parser')
-const config = require('./config');
+const config = require('../arquivos/config');
 var cors = require('cors');
 
 

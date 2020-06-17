@@ -1,7 +1,7 @@
 const app = require('../src/app')
 const http = require('http');
 const debug = require('debug');
-const mysql = require('mysql2')
+
 
 const port = normalizePort(process.env.PORT || '3333');
 app.set('port', port);

@@ -1,106 +1,172 @@
 
-//const connection = require('../database/connection')
 const connection = require('../../mysql').pool
 
-exports.post = async(req, res)=>{
+exports.post = async (req, res) => {
 
-    try{
+    const ACS_id = req.headers.authorization;
+    try {
 
-        const ACS_id = req.headers.authorization;
+        await connection.getConnection((error, conn) => {
+            if (error)
+                return res.send(400);
+            conn.query(
+                'INSERT INTO familia (id , numero, user_id) VALUES (?,?,?)',
+                [req.body.id,
+                req.body.numero,
+                    ACS_id],
+                (error, resultado, field) => {
+                    conn.release();
 
-         await connection('familia').insert({
-            id:req.body.id,
-            numero:req.body.numero,
-            ACS_id: ACS_id
-        
+                    if (error) {
+                        return res.status(400).send({
+                            error: error,
+                            response: null
+                        })
+                    }
+                    res.status(201).send({ message: 'cadastrado com sucesso' })
+                }
+            )
         })
-        
-        res.status(201).send(req.body)
 
-    }catch(e){
+    } catch (e) {
         console.log(e);
         res.status(400).send({ message: 'erro ao cadastrar', e });
-    }    
+    }
+
 }
 
-
-exports.get = async (req, res)=>{
-
-    const users = await connection('familia').select('*')
-    res.status(201).send(users)
-}
-exports.getById = async (req, res)=>{
-    const id = req.body.id;
-    const users = await connection('familia').where('id',id).first()
-    res.status(201).send(users)
-}
-
-exports.create = async (request, response ,next) => {
+exports.get = async (req, res) => {
 
     try {
 
-        const id = request.body.id
-        
+        await connection.getConnection((error, conn) => {
+            if (error) {
+                return res.send(400)
+            }
+            conn.query(
+                'SELECT * FROM familia',
+                (error, resultado) => {
+                    conn.release()
 
-        const user = await connection('familia').where({
-            id: id, 
-            
-        }).first().select('*')
+                    if (error) {
+                        return res.status(400).send({ erro: error, resultado: null })
+                    }
+                    return res.status(200).send(resultado)
 
-        if (!user) {
-            response.status(400).send({ message: 'usuario nao encontrado' })}
-  
-        response.status(200).send(user)
+                }
+            )
+        })
+
+    } catch (e) {
+        res.status(401).send(e)
     }
-    catch (e) {
-        response.send(e);
+}
+exports.getById = async (req, res) => {
+    const id = req.body.id;
+    const users = await connection('familia').where('id', id).first()
+    res.status(201).send(users)
+}
+
+exports.create = async (req, res, next) => {
+
+    try {
+
+        await connection.getConnection((error, conn) => {
+            if (error) {
+                return res.send(400);
+            }
+            conn.query(
+                'SELECT * FROM familia WHERE id = ?',
+                [req.body.id],
+                (error, resultado) => {
+                    conn.release();
+                    if (error) {
+                        return res.status(400).send({ message: 'erro ao buscar usuario' })
+                    }
+                    if (resultado == 0) {
+                        return res.status(404).send({ error: 'nao existe familia' })
+                    }
+                    res.status(200).send(resultado)
+                })
+        })
+
+    } catch (e) {
+        res.status(400).send(e)
     }
 }
 
-exports.buscaFamilia = async(req, res)=>{
-    
-try{
-    const familia_id = req.headers.authorization;
+exports.buscaFamilia = async (req, res) => {
 
+    try {
 
-    const users = await connection('membros').where('familia_id', familia_id).select('*')
-    res.status(201).send(users) 
-    //console.log(e)
-}catch(e){
-    
-    res.status(201).send(e)  
-}
-}
+        await connection.getConnection((error, conn) => {
+            if (error) {
+                res.send(400);
+            }
+            conn.query(
+                'SELECT * FROM membro WHERE familia_id =?',
+                [req.headers.authorization],
+                (error, data) => {
+                    conn.release();
+                    if (error) {
+                        return res.status(400).send({ error: error, data: null })
+                    }
+                    if (data == 0) {
+                        return res.status(202).send({ message: "sem usuario" })
+                    }
+                    res.status(200).send(data)
+                }
+            )
+        })
 
-exports.delete = async(req, res) =>{
+    } catch (e) {
 
-    const{id} = req.params;
-    //const family_id = req.headers.authorization
-
-    try{
-
-    const family = await connection('familia').where('id' , id).delete();
-
-    if (!family){
-        res.status(401).send({message:'nao foi possivel deletar'})
     }
-
-    
-
-    res.status(200).send({message:'deletado'})
-
-}catch(e){
-    res.status(401).send({message:'nao foi possivel deletar'})
-}
 }
 
+exports.delete = async (req, res) => {
 
-/* exports.getById = async(req, res) =>{
-    try{
-        var data = await repositore.getById(req.params.id)
-        res.status(200).send(data)
-    }catch(e){
-        res.status(400).send({ message: 'erro ao buscar id', e });
+    try {
+
+        await connection.getConnection((error, conn) => {
+            if (error) {
+                res.send(400)
+            }
+            conn.query(
+                'SELECT id FROM familia WHERE id = ?',
+                [req.params.id],
+                (error, resultado) => {
+                    conn.release();
+                    if (error) {
+                        return res.status(400).send({ error: error })
+                    }
+                    if (resultado == 0) {
+                        res.status(400).send({ message: 'id nao encontrado' })
+                    }
+                    else {
+                        conn.query(
+                            'DELETE FROM familia WHERE id = ?',
+                            [req.params.id,
+                            ],
+                            (error, resultado) => {
+                                conn.release();
+                                if (error) {
+                                    res.status(400).send({ error: error })
+                                }
+                                if (resultado == 0) {
+                                    res.status(400).send({ message: 'id nao encontrado' })
+                                }
+                                res.status(400).send({ message: 'deletado com sucesso' })
+                            }
+                        )
+                    }
+                }
+            )
+
+
+        })
+
+    } catch (e) {
+        res.status(400).status(e)
     }
-
-} */
+}

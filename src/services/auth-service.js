@@ -11,7 +11,7 @@ exports.decodeToken = async(token) =>{
 }
 
 exports.authorize = function(req, res, next){
-    var token = req.body.token || req.query.token|| req.headers['x-access-token'];
+    var token = req.body.token || req.query.token|| req.headers['access'];
 
     if (!token){
         res.status(401).json({message: 'Acesso Restrito'})
@@ -29,7 +29,7 @@ exports.authorize = function(req, res, next){
 }
 
 exports.isAdmin = function(req, res, next){
-    var token = req.body.token || req.query.token|| req.headers['x-access-token'];
+    var token = req.body.token || req.query.token|| req.headers['access'];
 
     if (!token){
         res.status(401).json({
