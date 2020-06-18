@@ -1,6 +1,5 @@
 const md5 = require('md5')
 const mysql = require('mysql')
-//const connection = require('../database/connection')
 const connection = require('../../mysql').pool
 const crypto = require('crypto')
 const authorization = require('../services/auth-service')
@@ -9,17 +8,17 @@ const authorization = require('../services/auth-service')
 exports.post = async (req, res) => {
 
     try {
-
+        
         await connection.getConnection((error, conn) => {
             if (error)
                 return res.send(400);
             conn.query(
                 'INSERT INTO acs (id, nome, email, senha) VALUES (?,?,?,?)',
                 [crypto.randomBytes(4).toString('HEX'),
-                //req.body.id,
                 req.body.nome,
                 req.body.email,
-                md5(req.body.senha + global.SALT_KEY)],
+                md5(req.body.senha + process.env.USER_KEY)],
+                //md5(req.body.senha + global.SALT_KEY)
                 (error, resultado, field) => {
                     conn.release();
 
@@ -93,8 +92,9 @@ exports.authentication = async (req, res, next) => {
 
     
     try {
+        
         const email = req.body.email
-        const senha = md5(req.body.senha + global.SALT_KEY)
+        const senha = await md5(req.body.senha + process.env.USER_KEY)
 
         await connection.getConnection((error, conn) => {
             if (error)
@@ -120,7 +120,7 @@ exports.authentication = async (req, res, next) => {
                         const token = await authorization.generateToken({
                             email: req.body.email,
                             senha: req.body.senha
-                        })
+                        }) 
                         
                         const {id}  = await resultado[0]
 

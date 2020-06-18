@@ -1,6 +1,5 @@
 const express = require('express')
 const bodyparser =  require('body-parser')
-const config = require('../config');
 var cors = require('cors');
 
 
@@ -9,9 +8,6 @@ var cors = require('cors');
 
 const app = express()
 app.use(cors());
-//connection with database
-
-
 
 
 //call routes
