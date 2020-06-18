@@ -1,5 +1,5 @@
 const md5 = require('md5')
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const connection = require('../../mysql').pool
 const crypto = require('crypto')
 const authorization = require('../services/auth-service')

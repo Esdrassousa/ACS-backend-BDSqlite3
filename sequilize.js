@@ -1,9 +1,9 @@
  const Sequilize = require('sequelize')
 
-const sequelize = new Sequilize('test' , 'root' ,'',{
-    host: 'localhost',
+const sequelize = new Sequilize(process.env.MYSQL_DATABASE , process.env.MYSQL_USER ,process.env.MYSQL_PASSWORD,{
+    host: process.env.MYSQL_HOST,
     dialect: 'mysql',
-    port: 3307
+    port: process.env.MYSQL_PORT
 })
 
 sequelize.authenticate().then(function(){
